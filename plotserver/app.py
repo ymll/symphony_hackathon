@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from router import Router
 from datetime import datetime, timedelta
 
@@ -35,6 +35,16 @@ def vwap(stockname):
     start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
     end = parseDate(request.args.get('end'),today)
     return(router.stockVWAP(stockname, start, end))
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
+
+@app.route('/histogram/<stockname>')
+def histogram(stockname):
+    start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
+    end = parseDate(request.args.get('end'),today)
+    return(router.stockHistogram(stockname, start, end))
 
 
 if __name__ == '__main__':
