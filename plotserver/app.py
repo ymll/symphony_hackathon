@@ -21,6 +21,13 @@ def parseDate(strDate, defaultDate):
 def index():
     return("welcome to symphony hackathon")
 
+
+@app.route('/fx/<currencypair>')
+def fx(currencypair):
+    start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
+    end = parseDate(request.args.get('end'),today)
+    return(router.getFx(currencypair, start, end))
+
 @app.route('/stock/<stockname>')
 def apple(stockname):
     start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
