@@ -2,7 +2,13 @@
 # coding: utf-8
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.text import Text
+import pandas as pd
 
+keyWorks = [
+	'price',
+	'compare',
+	'vwap'
+]
 
 routingPaths = [
 	'/stock/<stockname>',
@@ -10,35 +16,37 @@ routingPaths = [
 	'/vwap/<stockname>'
 ]
 
+stockNameSymbols = {
+	'apple': 'AAPL',
+	'google': 'GOOG',
+	'goldman sachs': 'GS',
+	'morgan stanley': 'MS'
+}
+
 class Parser:	
-	def getRoutingPath(self, question):
-		path = routingPaths[0]
-		paramemter = ['AAPL']
-		return((path, paramemter))
-		
-	def getStockNames(self, question):
-		a = "What is the market colour for google?"
-		b = "What is market color for GOOGL?"
-		c = "market color GOOGL?"
-		d = "How are apple and tesla doing?"
-		e = "How are APPL and TESL doing?"
+	dfStock = []
+	def __init__(self):
+		dfStock = pd.read_csv('data/constituents.csv')
 
-		stocks = [
-		    'APPL',
-		    'apple',
-		    'GOOGL',
-		    'google'
-		]
+	def getParseResult(self, question):
+		tokens = word_tokenize(question);
+		path = self.getRoutingPath(tokens)
+		stockNames = self.getStockNames(tokens)
+		parameter = {
+			'StockNames': stockNames
+		}
+		return (path, parameter)
 
-		sentence = question; #enter command here
-		tokens = word_tokenize(sentence);
-		textList = Text(tokens)
-		print (textList)
+	def getRoutingPath(self, tokens):
+		for i, v in enumerate(tokens):
+			if v in keyWorks:
+				print(v, 'index ', i)
+				return routingPaths[i]
+		return None
 
-		results = [];
-		for word in tokens:
-			if word in stocks:
-				results.append(word);
-		print (results)
-		
+	def getStockNames(self, tokens):
+		results = []
+		for t in tokens:
+			if t in stockNameSymbols:
+				results.append(stockNameSymbols[t])
 		return results
