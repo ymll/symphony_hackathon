@@ -52,6 +52,10 @@ def capm(stockname):
     end = parseDate(request.args.get('end'),today)
     return(router.capm(stockname, start, end))
 
+@app.route('/sector/<timerange>')
+def sectorPerformance(timerange):
+    return(router.sectorPerformance(timerange))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',  debug=True,  port=6312)
