@@ -46,6 +46,12 @@ def histogram(stockname):
     end = parseDate(request.args.get('end'),today)
     return(router.stockHistogram(stockname, start, end))
 
+@app.route('/capm/<stockname>')
+def capm(stockname):
+    start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
+    end = parseDate(request.args.get('end'),today)
+    return(router.capm(stockname, start, end))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',  debug=True,  port=6312)

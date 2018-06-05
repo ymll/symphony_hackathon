@@ -5,6 +5,11 @@ from pathlib import Path
 from flask import render_template
 from pathlib import Path
 from datetime import datetime
+
+import numpy as np
+import matplotlib.pyplot as mplot
+import statsmodels.api as sm
+from statsmodels import regression
 from marketdataservice import MarketDataService
 
 plt.sign_in('sheepjian', 'jpl9cET3s2Ytr8riYYJR') # Replace the username, and API key with your credentials.
@@ -17,6 +22,13 @@ def fileBaseName(startTime, endTime):
     return(startTime.strftime("%Y-%m-%d") + '-' \
             + endTime.strftime("%Y-%m-%d") + \
             "-" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S") +stockChartBaseName) 
+
+def linReg(x,y):
+    x = sm.add_constant(x)
+    model = regression.linear_model.OLS(y,x).fit()
+    x = x[:,1]
+    return model.params[0], model.params[1]
+
 
 class Router:
     def getStock(self, stockname, startTime, endTime):
@@ -141,6 +153,36 @@ class Router:
         fig = go.Figure(data=data, layout=layout)
         
         plt.image.save_as(fig, filename=Path(filePath))
+
+        return render_template(stockTemplate,
+                           imageFolder=imageFolder,
+                           fileName=filename)
+
+    def capm(self, stocka, startTime, endTime):
+        filename = stocka+ "-capm-" + fileBaseName(startTime, endTime)
+        filePath = imageFolder +'/'  + filename
+        # to be replaced by market data service
+        df = web.DataReader(stocka, 'morningstar', startTime, endTime)
+        fd = web.DataReader("spx", 'morningstar', startTime, endTime)
+        
+        return_index = fd.Close.pct_change()[1:]
+        return_stock = df.Close.pct_change()[1:]
+
+        y = return_stock.values
+        x = return_index.values
+
+        alpha, beta = linReg(x, y)
+
+        x2 = np.linspace(x.min(), x.max(), 100)
+        y_hat = x2*beta+alpha
+
+        fig = mplot.figure()
+        mplot.scatter(x,y,alpha=0.3)
+        mplot.xlabel("index")
+        mplot.ylabel(stocka)
+        mplot.plot(x2,y_hat, "r", alpha=0.9)
+        mplot.annotate('alpha: '+str(alpha)+", beta: "+str(beta), xy=(0.05, 0.95), xycoords='axes fraction')
+        fig.savefig(Path(filePath))
 
         return render_template(stockTemplate,
                            imageFolder=imageFolder,
