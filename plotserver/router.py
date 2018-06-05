@@ -5,11 +5,12 @@ from pathlib import Path
 from flask import render_template
 from pathlib import Path
 from datetime import datetime
+
 import numpy as np
 import matplotlib.pyplot as mplot
 import statsmodels.api as sm
 from statsmodels import regression
-
+from marketdataservice import MarketDataService
 
 plt.sign_in('sheepjian', 'jpl9cET3s2Ytr8riYYJR') # Replace the username, and API key with your credentials.
 
@@ -35,7 +36,9 @@ class Router:
         filePath = imageFolder +'/'  + filename
 
         # to be replaced by market data service
-        df = web.DataReader(stockname, 'morningstar', startTime, endTime).reset_index()
+        # df = web.DataReader(stockname, 'morningstar', startTime, endTime).reset_index()
+        MDS = MarketDataService()
+        df = MDS.get_df(stockname, 'morningstar', startTime, endTime)
         trace = go.Ohlc(x=df.Date,
                 open=df.Open,
                 high=df.High,
