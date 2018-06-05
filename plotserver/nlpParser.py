@@ -12,8 +12,18 @@ routingPaths = [
 
 class Parser:	
 	def getRoutingPath(self, question):
-		path = routingPaths[0]
-		paramemter = ['AAPL']
+		stocksInSentence = self.getStockNames(question);
+		VWAPInSentence = self.getVWAP(question);
+		length = len(stocksInSentence);
+		if length == 1:
+			if VWAPInSentence == True:
+				path = routingPaths[2]
+			else:
+				path = routingPaths[0]
+			paramemter = stocksInSentence[0]
+		if length == 2:
+			path = routingPaths[2]
+			paramemter = stocksInSentence
 		return((path, paramemter))
 		
 	def getStockNames(self, question):
@@ -26,7 +36,7 @@ class Parser:
 		stocks = [
 		    'APPL',
 		    'apple',
-		    'GOOGL',
+		    'GOOG',
 		    'google'
 		]
 
@@ -41,4 +51,21 @@ class Parser:
 				results.append(word);
 		print (results)
 		
-		return results
+		return [results]
+
+	def getVWAP(self, question):
+		vwapVariables = [
+			'vwap'
+			'volume'
+		]
+
+		sentence = question; #enter command here
+		tokens = word_tokenize(sentence);
+		textList = Text(tokens)
+
+		vwap = False;
+		for word in tokens:
+			if word in vwapVariables:
+				vwap = True;
+		
+		return vwap
