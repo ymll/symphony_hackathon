@@ -29,7 +29,7 @@ def fx(currencypair):
     return(router.getFx(currencypair, start, end))
 
 @app.route('/stock/<stockname>')
-def apple(stockname):
+def stock(stockname):
     start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
     end = parseDate(request.args.get('end'),today)
     return(router.getStock(stockname, start, end))
