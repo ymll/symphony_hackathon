@@ -1,8 +1,11 @@
 from flask import Flask, request, send_from_directory
 from router import Router
 from datetime import datetime, timedelta
+from nlp import Engine
 
-router = Router()
+mode = "server" # server/web, server will return static url 
+router = Router(mode)
+engine = Engine()
 today = datetime.now()
 
 app = Flask(__name__)
@@ -62,6 +65,10 @@ def capm(stockname):
 @app.route('/sector/<timerange>')
 def sectorPerformance(timerange):
     return(router.sectorPerformance(timerange))
+
+@app.route('/question/<q>')
+def parser(q):
+    return(engine.parse(q))
 
 
 if __name__ == '__main__':
