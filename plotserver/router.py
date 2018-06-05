@@ -16,8 +16,8 @@ from statsmodels import regression
 from marketdataservice import MarketDataService
 from alpha_vantage.sectorperformance import SectorPerformances
 
-plt.sign_in('sheepjian', 'jpl9cET3s2Ytr8riYYJR') # Replace the username, and API key with your credentials.
-#plt.sign_in('disha_j25', 'a8QJvpWrBYslZGF8PWpl') #backup key for plotly
+#plt.sign_in('sheepjian', 'jpl9cET3s2Ytr8riYYJR') # Replace the username, and API key with your credentials.
+plt.sign_in('disha_j25', 'a8QJvpWrBYslZGF8PWpl') #backup key for plotly
 
 imageFolder = "static"
 stockChartBaseName = "-simple-plot.png"
@@ -143,9 +143,7 @@ class Router:
         
         plt.image.save_as(fig, filename=Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
     def getStock(self, stockname, startTime, endTime):
         filename = stockname + "-" + fileBaseName(startTime, endTime)

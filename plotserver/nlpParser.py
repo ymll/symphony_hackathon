@@ -32,16 +32,18 @@ class Parser:
 		stocksInSentence = self.getStockNames(question);
 		VWAPInSentence = self.getVWAP(question);
 		length = len(stocksInSentence);
+		path = None
+		parameter = ["nonthing"]
 		if length == 1:
 			if VWAPInSentence == True:
 				path = routingPaths[2]
 			else:
 				path = routingPaths[0]
-			paramemter = stocksInSentence[0]
+			parameter = stocksInSentence[0]
 		if length == 2:
 			path = routingPaths[2]
-			paramemter = stocksInSentence
-		return((path, paramemter))
+			parameter = stocksInSentence
+		return((path, parameter))
 		
 	def getStockNames(self, question):
 		a = "What is the market colour for google?"
@@ -99,14 +101,14 @@ class Parser:
 		}
 		return (path, parameter)
 
-	def getRoutingPath(self, tokens):
+	def getRoutingPathDeprecated(self, tokens):
 		for i, v in enumerate(tokens):
 			if v in keyWorks:
 				print(v, 'index ', i)
 				return routingPaths[i]
 		return None
 
-	def getStockNames(self, tokens):
+	def getStockNamesDeprecated(self, tokens):
 		results = []
 		for t in tokens:
 			if t in stockNameSymbols:
