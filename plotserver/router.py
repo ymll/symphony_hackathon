@@ -6,6 +6,8 @@ from flask import render_template
 from pathlib import Path
 from datetime import datetime
 import re
+from PIL import Image
+import json
 
 import numpy as np
 import matplotlib.pyplot as mplot
@@ -31,7 +33,6 @@ def linReg(x,y):
     x = x[:,1]
     return model.params[0], model.params[1]
 
-
 class Router:
     mode = 'server'
 
@@ -40,7 +41,15 @@ class Router:
 
     def showResult(self,stockTemplate,imageFolder,fileName):
         if self.mode == "server":
-            return imageFolder +'/'  + fileName
+            imagePath = imageFolder +'/'  + fileName
+            with Image.open(imagePath) as img:
+                width, height = img.size
+                print('height is ', height)
+                return(json.dumps({
+                        'path': imagePath,
+                        'width':width,
+                        'height': height
+                })) 
         else:
             return render_template(stockTemplate,imageFolder=imageFolder,fileName=fileName)
 
