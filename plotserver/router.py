@@ -33,6 +33,101 @@ def linReg(x,y):
 
 
 class Router:
+
+    def getFx(self, currency_pair, startTime, endTime):
+        filename = currency_pair + "-"+ fileBaseName(startTime, endTime)
+        filePath = imageFolder +'/'  + filename
+        # to be replaced by market data service
+        MDS = MarketDataService()
+        df = MDS.get_df(currency_pair, 'fx', startTime, endTime)
+
+        trace_ask_high  = go.Scatter(
+                            x=df.date,
+                            y=df.high_ask,
+                            mode = 'lines',
+                            name = 'high ask',
+                            line = dict(
+                                    color = ('rgb(205, 12, 24)'),
+                                    width = 1,
+                                    dash = 'dash'
+                                    )
+                            )
+
+        trace_ask_low   = go.Scatter(
+                            x=df.date,
+                            y=df.low_ask,
+                            mode = 'lines',
+                            name = 'low ask',
+                            line = dict(
+                                    color = ('rgb(205, 12, 24)'),
+                                    width = 1,
+                                    dash = 'dash'
+                                    )
+                            )
+
+        trace_ask_close = go.Scatter(
+                            x=df.date,
+                            y=df.close_ask,
+                            mode = 'lines',
+                            name = 'close ask',
+                            line = dict(
+                                    color = ('rgb(205, 12, 24)'),
+                                    width = 1,
+                                    )
+                            )
+
+        trace_bid_high  = go.Scatter(
+                            x=df.date,
+                            y=df.high_bid,
+                            mode = 'lines',
+                            name = 'high bid',
+                            line = dict(
+                                    color = ('rgb(22, 96, 167)'),
+                                    width = 1,
+                                    dash = 'dash'
+                                    )
+                            )
+
+        trace_bid_low   = go.Scatter(
+                            x=df.date,
+                            y=df.low_bid,
+                            mode = 'lines',
+                            name = 'low bid',
+                            line = dict(
+                                    color = ('rgb(22, 96, 167)'),
+                                    width = 1,
+                                    dash = 'dash'
+                                    )
+                            )
+
+        trace_bid_close = go.Scatter(
+                            x=df.date,
+                            y=df.close_bid,
+                            mode = 'lines',
+                            name = 'bid close',
+                            line = dict(
+                                    color = ('rgb(22, 96, 167)'),
+                                    width = 1,
+                                    )
+                            )
+
+        layout = go.Layout(
+            xaxis = dict(
+                rangeslider = dict(
+                    visible = False
+                )
+            )
+        )
+        data = [trace_ask_low, trace_ask_high, trace_ask_close, trace_bid_low, trace_bid_high, trace_bid_close]
+        fig = go.Figure(data=data, layout=layout)
+        
+        plt.image.save_as(fig, filename=Path(filePath))
+
+        return render_template(stockTemplate,
+                           imageFolder=imageFolder,
+                           fileName=filename)
+
+
     def getStock(self, stockname, startTime, endTime):
         filename = stockname + "-" + fileBaseName(startTime, endTime)
         filePath = imageFolder +'/'  + filename
