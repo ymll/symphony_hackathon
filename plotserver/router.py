@@ -54,12 +54,39 @@ class Router:
         else:
             return render_template(stockTemplate,imageFolder=imageFolder,fileName=fileName)
 
-    def getFx(self, currency_pair, startTime, endTime):
+    def getCrypto(self, symbol, market, startTime, endTime, timeframe=None):
+        filename = symbol + "-" + fileBaseName(startTime, endTime)
+        filePath = imageFolder +'/'  + filename
+
+        MDS = MarketDataService()
+        df = MDS.get_crypto(symbol, market, startTime, endTime, timeframe)
+        trace = go.Ohlc(x=df.date,
+                open=df.a0,
+                high=df.a2,
+                low=df.a4,
+                close=df.a6)
+
+        layout = go.Layout(
+            xaxis = dict(
+                rangeslider = dict(
+                    visible = False
+                )
+            )
+        )
+        data = [trace]
+        fig = go.Figure(data=data, layout=layout)
+        
+        plt.image.save_as(fig, filename=Path(filePath))
+
+        return(self.showResult(stockTemplate, imageFolder, filename))
+
+    def getFx(self, currency_pair, startTime, endTime, timeframe=None):
         filename = currency_pair + "-"+ fileBaseName(startTime, endTime)
         filePath = imageFolder +'/'  + filename
         # to be replaced by market data service
         MDS = MarketDataService()
-        df = MDS.get_df(currency_pair, 'fx', startTime, endTime)
+        print('timeframe:', timeframe)
+        df = MDS.get_fx_df(currency_pair, startTime, endTime, timeframe)
 
         trace_ask_high  = go.Scatter(
                             x=df.date,
