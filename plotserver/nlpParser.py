@@ -23,8 +23,7 @@ stockNameSymbols = {
 	'morgan stanley': 'MS'
 }
 
-class Parser:	
-<<<<<<< HEAD
+class Parser:
 	def getRoutingPath(self, question):
 		stocksInSentence = self.getStockNames(question);
 		VWAPInSentence = self.getVWAP(question);
@@ -83,7 +82,6 @@ class Parser:
 				vwap = True;
 		
 		return vwap
-=======
 	dfStock = []
 	def __init__(self):
 		dfStock = pd.read_csv('data/constituents.csv')
@@ -110,4 +108,3 @@ class Parser:
 			if t in stockNameSymbols:
 				results.append(stockNameSymbols[t])
 		return results
->>>>>>> d9e6a57c9430101b2d7b0e9879a2eb8a11c995ce
