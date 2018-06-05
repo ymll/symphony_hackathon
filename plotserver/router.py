@@ -6,6 +6,8 @@ from flask import render_template
 from pathlib import Path
 from datetime import datetime
 import re
+from PIL import Image
+import json
 
 import numpy as np
 import matplotlib.pyplot as mplot
@@ -31,8 +33,27 @@ def linReg(x,y):
     x = x[:,1]
     return model.params[0], model.params[1]
 
-
 class Router:
+    mode = 'server'
+
+    def __init__(self, mode):
+        self.mode = mode
+
+    def showResult(self,stockTemplate,imageFolder,fileName):
+        if self.mode == "server":
+            imagePath = imageFolder +'/'  + fileName
+            with Image.open(imagePath) as img:
+                width, height = img.size
+                print('height is ', height)
+                return(json.dumps({
+                        'path': imagePath,
+                        'width':width,
+                        'height': height
+                })) 
+        else:
+            return render_template(stockTemplate,imageFolder=imageFolder,fileName=fileName)
+
+
     def getStock(self, stockname, startTime, endTime):
         filename = stockname + "-" + fileBaseName(startTime, endTime)
         filePath = imageFolder +'/'  + filename
@@ -59,9 +80,7 @@ class Router:
         
         plt.image.save_as(fig, filename=Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
     def compareStock(self, stocka, stockb, startTime, endTime):
         filename = stocka+ "-" + stockb + "-"+ fileBaseName(startTime, endTime)
@@ -93,9 +112,7 @@ class Router:
         
         plt.image.save_as(fig, filename=Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
     def stockVWAP(self, stocka, startTime, endTime):
         filename = stocka+ "-VWAP-" + fileBaseName(startTime, endTime)
@@ -129,9 +146,7 @@ class Router:
         
         plt.image.save_as(fig, filename=Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
     def stockHistogram(self, stocka, startTime, endTime):
         filename = stocka+ "-histogram-" + fileBaseName(startTime, endTime)
@@ -156,9 +171,7 @@ class Router:
         
         plt.image.save_as(fig, filename=Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
     def capm(self, stocka, startTime, endTime):
         filename = stocka+ "-capm-" + fileBaseName(startTime, endTime)
@@ -186,9 +199,7 @@ class Router:
         mplot.annotate('alpha: '+str(alpha)+", beta: "+str(beta), xy=(0.05, 0.95), xycoords='axes fraction')
         fig.savefig(Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
     def sectorPerformance(self, timerange):
         filename = timerange+ "-sector-" + "-" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S") +stockChartBaseName
@@ -214,8 +225,6 @@ class Router:
         if timerange != 'realtime' and timerange != 'ytd':
             title = key[0:7] + ' '+  re.findall(r'\d+', timerange)[0] + ' ' + key[8:]
 
-        print("title is ", title)
-
         sp = SectorPerformances(key='O16MFPVKSJGHLIL6', output_format='pandas')
         data, meta_data = sp.get_sector()
         fig = mplot.figure()
@@ -225,8 +234,6 @@ class Router:
         mplot.grid()
         fig.savefig(Path(filePath))
 
-        return render_template(stockTemplate,
-                           imageFolder=imageFolder,
-                           fileName=filename)
+        return(self.showResult(stockTemplate, imageFolder, filename))
 
 
