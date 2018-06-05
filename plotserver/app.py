@@ -2,7 +2,8 @@ from flask import Flask, request, send_from_directory
 from router import Router
 from datetime import datetime, timedelta
 
-router = Router()
+mode = "server" # server/web, server will return static url 
+router = Router(mode)
 today = datetime.now()
 
 app = Flask(__name__)
