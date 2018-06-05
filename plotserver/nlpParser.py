@@ -1,22 +1,22 @@
 
 # coding: utf-8
-from flask import request
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.text import Text
-from router import Router
-from datetime import datetime, timedelta
 
-router = Router()
-today = datetime.now()
 
-class Parser:
-	def parseDate(strDate, defaultDate):
-	    result = defaultDate
-	    if strDate != None:
-	        result = datetime.strptime(strDate, "%Y-%m-%d")
-	    return(result)
+routingPaths = [
+	'/stock/<stockname>',
+	'/compare/<stocka>/<stockb>',
+	'/vwap/<stockname>'
+]
 
-	def getStockNames(self):
+class Parser:	
+	def getRoutingPath(self, question):
+		path = routingPaths[0]
+		paramemter = ['AAPL']
+		return((path, paramemter))
+		
+	def getStockNames(self, question):
 		a = "What is the market colour for google?"
 		b = "What is market color for GOOGL?"
 		c = "market color GOOGL?"
@@ -30,10 +30,7 @@ class Parser:
 		    'google'
 		]
 
-		start = parseDate(request.args.get('start'),today-timedelta(days=5*365))
-		end = parseDate(request.args.get('end'),today)
-
-		sentence = b; #enter command here
+		sentence = question; #enter command here
 		tokens = word_tokenize(sentence);
 		textList = Text(tokens)
 		print (textList)
@@ -42,15 +39,6 @@ class Parser:
 		for word in tokens:
 			if word in stocks:
 				results.append(word);
-
 		print (results)
-		length = len(results)
-
-		if length == 1:
-		    print ('one stock')
-		    Router.getStockNames(results[0], start, end)
-
-		if length == 2:
-		    print ('two stocks')
 		
 		return results
