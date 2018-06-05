@@ -2,7 +2,13 @@
 # coding: utf-8
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.text import Text
+import pandas as pd
 
+keyWorks = [
+	'price',
+	'compare',
+	'vwap'
+]
 
 routingPaths = [
 	'/stock/<stockname>',
@@ -10,7 +16,15 @@ routingPaths = [
 	'/vwap/<stockname>'
 ]
 
+stockNameSymbols = {
+	'apple': 'AAPL',
+	'google': 'GOOG',
+	'goldman sachs': 'GS',
+	'morgan stanley': 'MS'
+}
+
 class Parser:	
+<<<<<<< HEAD
 	def getRoutingPath(self, question):
 		stocksInSentence = self.getStockNames(question);
 		VWAPInSentence = self.getVWAP(question);
@@ -69,3 +83,31 @@ class Parser:
 				vwap = True;
 		
 		return vwap
+=======
+	dfStock = []
+	def __init__(self):
+		dfStock = pd.read_csv('data/constituents.csv')
+
+	def getParseResult(self, question):
+		tokens = word_tokenize(question);
+		path = self.getRoutingPath(tokens)
+		stockNames = self.getStockNames(tokens)
+		parameter = {
+			'StockNames': stockNames
+		}
+		return (path, parameter)
+
+	def getRoutingPath(self, tokens):
+		for i, v in enumerate(tokens):
+			if v in keyWorks:
+				print(v, 'index ', i)
+				return routingPaths[i]
+		return None
+
+	def getStockNames(self, tokens):
+		results = []
+		for t in tokens:
+			if t in stockNameSymbols:
+				results.append(stockNameSymbols[t])
+		return results
+>>>>>>> d9e6a57c9430101b2d7b0e9879a2eb8a11c995ce
