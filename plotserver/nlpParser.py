@@ -17,10 +17,14 @@ routingPaths = [
 ]
 
 stockNameSymbols = {
-	'apple': 'AAPL',
-	'google': 'GOOG',
-	'goldman sachs': 'GS',
-	'morgan stanley': 'MS'
+	'apple',
+	'AAPL',
+	'google',
+	'GOOG',
+	'goldman sachs',
+	'GS',
+	'morgan stanley',
+	'MS'
 }
 
 class Parser:
